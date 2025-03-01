@@ -35,47 +35,66 @@ $(document).ready(() => {
 });
 
 function updateBlueprint() {
-  const blueprint = blueprints[currentBlueprint];
-  const $bp = $("#exportContainer " + blueprint.container);
-  if (!$bp.length) {
-    console.error("Blueprint container not found:", blueprint.container);
-    return;
-  }
-
-  const artistVal = $("#artistInput").val();
-  const showVal = $("#showInput").val();
-  const dateVal = $("#dateInput").val();
-  const timeVal = $("#timeInput").val();
-  const cityVal = $("#citySelect").val();
-
-  // Update Blueprint
-  $bp.find("#bp-image").css("background-image", `url(${uploadedImage})`);
-  $bp.find("#city").text(cityVal);
-  $bp.find("#bp-date").text(dateVal ? dateVal.split("-").reverse().join(":").substr(0,5) : "");
-  $bp.find("#bp-time").text(timeVal);
-  $bp.find("#bp-show").text(showVal);
-  $bp.find("#bp-artist").text(artistVal);
-
-  // Update image alignment
-  const $bpImage = $bp.find("#bp-image");
-  $bpImage.css("background-position", getBackgroundPosition(currentAlignment));
-
-  // Update Preview with current blueprint settings
   clearTimeout(previewTimeout);
   previewTimeout = setTimeout(() => {
+    const blueprint = blueprints[currentBlueprint];
+    const $bp = $("#exportContainer " + blueprint.container);
+    if (!$bp.length) {
+      console.error("Blueprint container not found:", blueprint.container);
+      return;
+    }
+
+    const artistVal = $("#artistInput").val();
+    const showVal = $("#showInput").val();
+    const dateVal = $("#dateInput").val();
+    const timeVal = $("#timeInput").val();
+    const cityVal = $("#citySelect").val();
+
+    // Update Blueprint
+    $bp.find("#bp-image").css("background-image", `url(${uploadedImage})`);
+    $bp.find("#city").text(cityVal);
+    
+    // Format date and update weekday
+    if (dateVal) {
+      const [year, month, day] = dateVal.split('-');
+      const date = new Date(year, month - 1, day);
+      const weekdays = ['SUN', 'MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT'];
+      const weekday = weekdays[date.getDay()];
+      
+      $bp.find("#bp-date").text(`${day}.${month}.${year}`);
+      $bp.find("#bp-weekday").text(weekday);
+      console.log("Updated weekday in updateBlueprint:", weekday);
+    } else {
+      $bp.find("#bp-date").text("");
+      $bp.find("#bp-weekday").text("");
+    }
+    
+    $bp.find("#bp-time").text(timeVal);
+    $bp.find("#bp-show").text(showVal);
+    $bp.find("#bp-artist").text(artistVal);
+
+    // Update image alignment
+    const $bpImage = $bp.find("#bp-image");
+    $bpImage.css("background-position", getBackgroundPosition(currentAlignment));
+
+    // Generate preview
     html2canvas($bp[0], {
-      scale: 0.267,
+      scale: 1,
       useCORS: true,
       logging: false,
-      backgroundColor: "#222" // Ensure background is rendered
+      backgroundColor: "#222",
+      imageTimeout: 0,
+      allowTaint: true,
+      quality: 1.0
     }).then(canvas => {
       const preview = $("#webpPreview");
-      preview.attr("src", canvas.toDataURL("image/webp"));
-      preview.css("display", "block"); // Ensure the preview is visible
+      preview.attr("src", canvas.toDataURL("image/webp", 1.0));
+      preview.css("display", "block");
+      console.log("Preview updated successfully");
     }).catch(error => {
       console.error("Error generating preview:", error);
     });
-  }, 500);
+  }, 300);
 }
 
 // Add function to check if any input has changed
@@ -86,10 +105,19 @@ function resetSaveStates() {
     $("#createSquareFrame").removeClass('saved').html('save square');
 }
 
-// Modify the input change handlers to reset save states
+// Modify the input change handlers to reset save states and update preview
 $("#artistInput, #showInput, #dateInput, #timeInput, #citySelect").on("input change", function() {
     resetSaveStates();
-    updateBlueprint();
+    
+    // Make sure the correct blueprint is loaded before updating
+    if ($("#exportContainer " + blueprints[currentBlueprint].container).length === 0) {
+        $("#exportContainer").load(blueprints[currentBlueprint].template, () => {
+            console.log(`Loaded template: ${blueprints[currentBlueprint].template}`);
+            updateBlueprint();
+        });
+    } else {
+        updateBlueprint();
+    }
 });
 
 // Add handler for image changes
@@ -312,7 +340,31 @@ function updateBlueprintContent($bp) {
         "background-position": getBackgroundPosition(currentAlignment)
     });
     $bp.find("#city").text(cityVal);
-    $bp.find("#bp-date").text(dateVal ? dateVal.split("-").reverse().join(":").substr(0,5) : "");
+    
+    // Format date as DD.MM.YYYY and get weekday
+    if (dateVal) {
+        const [year, month, day] = dateVal.split('-');
+        const date = new Date(year, month - 1, day); // month is 0-indexed in JavaScript
+        
+        // Get weekday abbreviation (MON, TUE, WED, etc.)
+        const weekdays = ['SUN', 'MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT'];
+        const weekday = weekdays[date.getDay()];
+        
+        // Format the date
+        const formattedDate = `${day}.${month}.${year}`;
+        
+        // Update the HTML - use explicit selectors
+        $bp.find("#bp-date").text(formattedDate);
+        $bp.find("#bp-weekday").text(weekday);
+        
+        // Log for debugging
+        console.log("Updated weekday to:", weekday);
+        console.log("Weekday element found:", $bp.find("#bp-weekday").length > 0);
+    } else {
+        $bp.find("#bp-date").text("");
+        $bp.find("#bp-weekday").text("");
+    }
+    
     $bp.find("#bp-time").text(timeVal);
     $bp.find("#bp-show").text(showVal);
     $bp.find("#bp-artist").text(artistVal);
@@ -337,3 +389,12 @@ function getBackgroundPosition(alignment) {
         default: return "center center";
     }
 }
+
+// Add specific handler for date changes
+$("#dateInput").on("change", function() {
+    // Force reload of the template to ensure all elements are present
+    $("#exportContainer").load(blueprints[currentBlueprint].template, () => {
+        console.log("Template reloaded after date change");
+        updateBlueprint();
+    });
+});

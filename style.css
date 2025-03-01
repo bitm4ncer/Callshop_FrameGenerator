@@ -8,6 +8,12 @@
   @font-face {
     font-family: "IconaSans";
     src: url("parts/IconaSans-Medium.woff") format("woff");
+    font-weight: 600;
+    font-style: normal;
+  }
+  @font-face {
+    font-family: "IconaSans";
+    src: url("parts/IconaSans-Semibold.woff") format("woff");
     font-weight: 700;
     font-style: normal;
   }
@@ -18,6 +24,7 @@
     margin: 80px;
     background: black;
     color: #333;
+    letter-spacing: 3%;
   }
   
   h1 {
@@ -126,6 +133,7 @@
     width: 100%;
     overflow: hidden;
     background: #222;
+    max-height: 600px; /* Adjust this value as needed */
   }
   
   #webpPreview {
@@ -133,6 +141,7 @@
     height: 100%;
     display: block;
     object-fit: contain;
+    max-width: 100%;
   }
   
   /* Form Elements */
@@ -212,8 +221,8 @@
   /* Blueprint Styles */
   #blueprint {
     position: relative;
-    width: 1500px;
-    height: 2000px;
+    width: 1080px;
+    height: 1350px;
     overflow: hidden;
     background: #222;
     color: #fff;
@@ -241,14 +250,24 @@
   .overlay-bottom {
     bottom: 0;
     height: 300px;
-    background: linear-gradient(180deg, rgba(0,0,0,0) 0%, rgba(0,0,0,0.5) 100%);
-  }
+    background: linear-gradient(
+      to top, 
+      rgba(111, 111, 111, 0.7) 0%, 
+      rgba(104, 104, 104, 0.12) 58%, 
+      rgba(103, 103, 103, 0) 88%
+    );
+      }
   
   .overlay-top {
     top: 0;
     height: 300px;
-    background: linear-gradient(180deg, rgba(0,0,0,0.5) 0%, rgba(0,0,0,0) 100%);
-  }
+    background: linear-gradient(
+      to bottom, 
+      rgba(111, 111, 111, 0.7) 0%, 
+      rgba(104, 104, 104, 0.12) 58%, 
+      rgba(103, 103, 103, 0) 88%
+    );
+      }
   
   .bp-text {
     z-index: 3;
@@ -263,8 +282,8 @@
     display: flex;
     flex-direction: column;
     gap: 10px;
-    font-weight: 400;
-    font-size: 40px;
+    font-weight: 700;
+    font-size: 35px;
     z-index: 3;
   }
   
@@ -272,6 +291,12 @@
     display: flex;
     flex-direction: row;
     gap: 30px;
+  }
+
+  .column {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
   }
   
   .live-badge {
@@ -303,22 +328,22 @@
   }
   
   #bp-artist {
-    font-size: 55px;
-    font-weight: 400;
+    font-size: 35px;
+    font-weight: 700;
     text-transform: uppercase;
   }
   
   #bp-show {
     text-transform: uppercase;
-    font-size: 75px;
+    font-size: 50px;
     font-weight: 700;
   }
   
   .graphic {
     position: absolute;
-    left: 400px;
-    bottom: -100px;
-    width: 1200px;
+    left: 250px;
+    bottom: -20px;
+    width: 1050px;
     z-index: 4;
   }
   
@@ -335,7 +360,7 @@
     position: absolute;
     top: 50px;
     right: 50px;
-    width: 100px;
+    width: 85px;
     z-index: 4;
   }
   
@@ -544,4 +569,107 @@
   .align-btn svg {
     width: 16px;
     height: 16px;
+  }
+
+  /* Modern Info Box Styles */
+  .info-box.modern {
+    position: absolute;
+    top: 50px;
+    left: 50px;
+    display: flex;
+    flex-direction: row;
+    align-items: flex-start;
+    gap: 10px;
+    font-weight: 700;
+    font-size: 35px;
+    z-index: 3;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+
+  /* City container styles */
+  .info-box.modern .city-container {
+    flex: 0 0 auto;
+    width: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    height: 100%;
+  }
+
+  .info-box.modern #city {
+    font-weight: 700;
+    transform: rotate(90deg);
+    transform-origin: center center;
+    margin-top: -17px;
+    margin-left: -30px;
+    border: 2px solid white;
+    border-radius: 30px;
+    padding: 0px 18px;
+    display: inline-block;
+    text-align: center;
+    min-width: 60px;
+    white-space: nowrap;
+    position: absolute;
+    left: 5px;
+    top: 40px;
+  }
+
+  /* Content container styles */
+  .info-box.modern .content-container {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 0px;
+    margin-left: 65px;
+  }
+
+  .info-box.modern .row {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+  }
+
+  .info-box.modern .site-info {
+    font-size: 35px;
+    font-weight: 700;
+  }
+
+  .info-box.modern .domain {
+    font-weight: 700;
+  }
+
+  .info-box.modern .live-badge {
+    display: flex;
+    align-items: center;
+    color: #FFBCD9;
+    font-weight: 700;
+  }
+
+  .info-box.modern .live-badge::before {
+    content: "";
+    display: inline-block;
+    width: 16px;
+    height: 16px;
+    margin-right: 10px;
+    margin-top: 4px;
+    background-color: #FFBCD9;
+    border-radius: 50%;
+  }
+
+  .info-box.modern .date-time-info {
+    font-size: 35px;
+    font-weight: 700;
+    color: white;
+    margin-top: -5px
+  }
+
+  .info-box.modern .time-separator {
+    display: flex;
+    align-items: center;
+  }
+
+  #bp-date, #bp-time {
+    font-weight: 700;
   }

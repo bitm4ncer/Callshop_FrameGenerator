@@ -1,22 +1,38 @@
+<link rel="stylesheet" href="style.css">
+
 <div id="blueprint">
   <div id="bp-image"></div>
   <div class="overlay overlay-bottom"></div>
   <div class="overlay overlay-top"></div>
   <img class="graphic" src="parts/line_graphic.svg" alt="Decorative graphic">
-  <div class="info-box">
-    <div class="row">
-      <div class="live-badge">LIVE</div>
-      <div id="city">DUSSS</div>
+  <div class="info-box modern">
+    <div class="city-container">
+      <div id="city">DUS</div>
     </div>
-    <div class="row" style="gap: 10px;">
-      <div id="bp-date" class="bp-text">25:04</div> –
-      <div id="bp-time" class="bp-text">19:00</div>
+    <div class="content-container">
+      <div class="row site-info">
+        <div class="domain">CALLSHOPRADIO.COM</div>
+        <div class="live-badge">LIVE</div>
+      </div>
+      <div class="row date-time-info">
+        <div class="date-container">
+          <span id="bp-weekday">WED</span> <span id="bp-date">25.04.2025</span>
+        </div>
+        <div class="time-separator">
+          <svg width="24" height="24" viewBox="0 0 24 24">
+            <line x1="4" y1="12" x2="16" y2="12" stroke="#fff" stroke-width="2"/>
+            <circle cx="8" cy="12" r="2" fill="#fff"/>
+            <circle cx="16" cy="12" r="2" fill="#fff"/>
+          </svg>
+        </div>
+        <div><span id="bp-time">19:00</span> CET</div>
+      </div>
     </div>
+  
   </div>
   <div class="show-info">
     <div id="bp-artist">Artist Name</div>
     <div id="bp-show">Show Name</div>
   </div>
   <img class="bildmarke" src="parts/bildmarke.svg" alt="Bildmarke">
-  <img class="wortmarke" src="parts/wortmarke.svg" alt="Wortmarke">
 </div>
