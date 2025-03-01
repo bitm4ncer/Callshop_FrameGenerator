@@ -133,7 +133,6 @@
     display: block;
     object-fit: contain;
     background: #222;
-    border-radius: 8px;
   }
   
   /* Form Elements */
@@ -359,7 +358,7 @@
     }
   
     #previewArea {
-      width: 90%;
+      width: 100%;
       margin: 20px auto 50px auto;
     }
   
