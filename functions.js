@@ -3,12 +3,12 @@ let previewTimeout;
 let currentBlueprint = "original";
 const blueprints = {
   original: {
-    template: "blueprint.html #blueprint",
+    template: "blueprint_social.html",
     container: "#blueprint",
     scale: 2
   },
   square: {
-    template: "blueprint_square.html #blueprint_square",
+    template: "blueprint_square.html",
     container: "#blueprint_square",
     scale: 2
   }
@@ -27,16 +27,20 @@ $(document).ready(() => {
   const formattedDate = defaultDate.toISOString().split('T')[0];
   $("#dateInput").val(formattedDate);
   
-  // Load blueprint template
-  $("#exportContainer").load("blueprint.html #blueprint", () => {
-    console.log("Blueprint template loaded");
+  // Load blueprint_social template by default
+  $("#exportContainer").load("blueprint_social.html", () => {
+    console.log("Blueprint social template loaded");
+    updateBlueprint();
   });
 });
 
 function updateBlueprint() {
   const blueprint = blueprints[currentBlueprint];
   const $bp = $("#exportContainer " + blueprint.container);
-  if (!$bp.length) return;
+  if (!$bp.length) {
+    console.error("Blueprint container not found:", blueprint.container);
+    return;
+  }
 
   const artistVal = $("#artistInput").val();
   const showVal = $("#showInput").val();
@@ -62,9 +66,14 @@ function updateBlueprint() {
     html2canvas($bp[0], {
       scale: 0.267,
       useCORS: true,
-      logging: false
+      logging: false,
+      backgroundColor: "#222" // Ensure background is rendered
     }).then(canvas => {
-      $("#webpPreview").attr("src", canvas.toDataURL("image/webp"));
+      const preview = $("#webpPreview");
+      preview.attr("src", canvas.toDataURL("image/webp"));
+      preview.css("display", "block"); // Ensure the preview is visible
+    }).catch(error => {
+      console.error("Error generating preview:", error);
     });
   }, 500);
 }
@@ -91,7 +100,15 @@ $("#imageInput").on("change", function(e) {
         const reader = new FileReader();
         reader.onload = (e) => {
             uploadedImage = e.target.result;
-            updateBlueprint();
+            // Make sure the correct blueprint is loaded before updating
+            if ($("#exportContainer " + blueprints[currentBlueprint].container).length === 0) {
+                $("#exportContainer").load(blueprints[currentBlueprint].template, () => {
+                    console.log(`Loaded template: ${blueprints[currentBlueprint].template}`);
+                    updateBlueprint();
+                });
+            } else {
+                updateBlueprint();
+            }
         };
         reader.readAsDataURL(file);
     }
@@ -222,6 +239,7 @@ $(".toggle-option").on("click", function() {
     
     // Load new blueprint template
     $("#exportContainer").load(blueprints[blueprint].template, () => {
+        console.log(`Loaded template: ${blueprints[blueprint].template}`);
         updateBlueprint();
         resetSaveStates(); // Reset save states when switching formats
     });
