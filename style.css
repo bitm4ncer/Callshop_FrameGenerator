@@ -496,3 +496,52 @@
     justify-content: center;
     white-space: nowrap;
   }
+
+  /* Controls Group */
+  .controls-group {
+    display: flex;
+    gap: 15px;
+    align-items: center;
+    justify-content: space-between; /* This will push items apart */
+    width: 100%; /* Ensure the container takes full width */
+  }
+
+  /* Alignment Controls */
+  .alignment-controls {
+    display: flex;
+    background: #333;
+    border-radius: 16px;
+    padding: 3px;
+    gap: 2px;
+  }
+
+  .align-btn {
+    background: none;
+    border: none;
+    width: 28px;
+    height: 28px;
+    padding: 6px;
+    margin: 0;
+    border-radius: 14px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #666;
+    transition: all 0.3s ease;
+  }
+
+  .align-btn:hover {
+    background: rgba(255, 188, 217, 0.2);
+    color: #FFBCD9;
+  }
+
+  .align-btn.active {
+    background: #FFBCD9;
+    color: white;
+  }
+
+  .align-btn svg {
+    width: 16px;
+    height: 16px;
+  }

@@ -17,6 +17,7 @@ const blueprints = {
 // Add these variables at the top
 let socialSaved = false;
 let squareSaved = false;
+let currentAlignment = "center";
 
 // Initialization
 $(document).ready(() => {
@@ -50,6 +51,10 @@ function updateBlueprint() {
   $bp.find("#bp-time").text(timeVal);
   $bp.find("#bp-show").text(showVal);
   $bp.find("#bp-artist").text(artistVal);
+
+  // Update image alignment
+  const $bpImage = $bp.find("#bp-image");
+  $bpImage.css("background-position", getBackgroundPosition(currentAlignment));
 
   // Update Preview with current blueprint settings
   clearTimeout(previewTimeout);
@@ -284,10 +289,33 @@ function updateBlueprintContent($bp) {
     const timeVal = $("#timeInput").val();
     const cityVal = $("#citySelect").val();
 
-    $bp.find("#bp-image").css("background-image", `url(${uploadedImage})`);
+    $bp.find("#bp-image").css({
+        "background-image": `url(${uploadedImage})`,
+        "background-position": getBackgroundPosition(currentAlignment)
+    });
     $bp.find("#city").text(cityVal);
     $bp.find("#bp-date").text(dateVal ? dateVal.split("-").reverse().join(":").substr(0,5) : "");
     $bp.find("#bp-time").text(timeVal);
     $bp.find("#bp-show").text(showVal);
     $bp.find("#bp-artist").text(artistVal);
+}
+
+// Add this to your existing code
+$(".align-btn").on("click", function() {
+    const alignment = $(this).data("align");
+    $(".align-btn").removeClass("active");
+    $(this).addClass("active");
+    currentAlignment = alignment;
+    updateBlueprint();
+});
+
+// Add this helper function
+function getBackgroundPosition(alignment) {
+    switch(alignment) {
+        case "top": return "center top";
+        case "bottom": return "center bottom";
+        case "left": return "left center";
+        case "right": return "right center";
+        default: return "center center";
+    }
 }
