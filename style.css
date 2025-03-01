@@ -1,0 +1,499 @@
+@font-face {
+    font-family: "IconaSans";
+    src: url("parts/IconaSans-Regular.woff") format("woff");
+    font-weight: 400;
+    font-style: normal;
+  }
+  
+  @font-face {
+    font-family: "IconaSans";
+    src: url("parts/IconaSans-Medium.woff") format("woff");
+    font-weight: 700;
+    font-style: normal;
+  }
+  
+  /* Main Styles */
+  body {
+    font-family: "IconaSans", sans-serif;
+    margin: 80px;
+    background: black;
+    color: #333;
+  }
+  
+  h1 {
+    font-size: 24px;
+    font-weight: 400;
+    margin-bottom: 20px;
+    text-align: center;
+    color: white;
+    text-transform: uppercase;
+  }
+  
+  a {
+    color: #FFBCD9;
+  }
+  
+  a:hover {
+    color: white;
+  }
+  
+  .wortmarke-frontend {
+    width: 400px;
+    display: block;
+    margin: 0 auto 20px auto;
+  }
+  
+  .bildmarke-frontend {
+    display: block;
+    margin: 20px auto 0 auto;
+    width: 55px;
+    transition: all 0.3s ease;
+  }
+  
+  .cloud-link {
+    max-width: 100px;
+  }
+  
+  .cloud-link:hover .bildmarke {
+    transform: scale(1.1);
+  }
+  
+  /* Form Container */
+  #frameForm {
+    background: #fff;
+    border: 1px solid #ddd;
+    border-radius: 12px;
+    padding: 30px;
+    max-width: 350px;
+    width: 90%;
+    margin: 0 auto 20px auto;
+    box-shadow: 0 2px 15px rgba(0,0,0,0.08);
+  }
+  
+  .form-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+  }
+  
+  .form-row {
+    display: flex;
+    gap: 20px;
+  }
+  
+  .form-field {
+    flex: 1;
+    min-width: 0; /* Prevents flex items from overflowing */
+  }
+  
+  .form-field.full-width {
+    width: 100%;
+  }
+  
+  label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 500;
+    color: #333;
+    font-size: 15px;
+  }
+  
+  /* Image Upload */
+  .image-upload {
+    border: 2px dashed #ccc;
+    border-radius: 8px;
+    padding: 40px;
+    text-align: center;
+    cursor: pointer;
+    margin-bottom: 20px;
+    color: #888;
+    transition: border-color 0.3s, color 0.3s;
+    position: relative;
+  }
+  
+  .image-upload:hover {
+    border-color: #FFBCD9;
+    color: #FFBCD9;
+  }
+  
+  .image-upload input[type="file"] {
+    display: none;
+  }
+  
+  /* Preview Area */
+  #previewArea {
+    margin: 20px auto;
+    width: 100%;
+    overflow: hidden;
+  }
+  
+  #webpPreview {
+    width: 100%;
+    height: 100%;
+    display: block;
+    object-fit: contain;
+    background: #222;
+    border-radius: 8px;
+  }
+  
+  /* Form Elements */
+  input[type="date"],
+  input[type="time"],
+  input[type="text"],
+  select {
+    width: 100%;
+    padding: 12px 16px;
+    margin-top: 8px;
+    border: 2px solid #eee;
+    border-radius: 8px;
+    font-size: 15px;
+    transition: all 0.3s ease;
+    background: #f8f8f8;
+    color: #333;
+    box-sizing: border-box;
+  }
+  
+  input[type="date"]:focus,
+  input[type="time"]:focus,
+  input[type="text"]:focus,
+  select:focus {
+    border-color: #FFBCD9;
+    background: #fff;
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(255, 188, 217, 0.1);
+  }
+  
+  .date-time {
+    display: flex;
+    gap: 20px;
+  }
+  
+  .date-time > div {
+    flex: 1;
+  }
+  
+  button {
+    margin-top: 20px;
+    padding: 12px 20px;
+    background: #FFBCD9;
+    color: #fff;
+    border: none;
+    border-radius: 50px;
+    cursor: pointer;
+    font-size: 16px;
+    width: 100%;
+    transition: all 0.3s ease;
+  }
+  
+  button:hover {
+    background: #78CE82;
+  }
+  
+  /* Footer */
+  .footer {
+    text-align: center;
+    padding: 20px 0;
+  }
+  
+
+  #exportContainer {
+    position: absolute;
+    opacity: 0;
+    z-index: -1;
+    pointer-events: none;
+    width: 1500px;
+    height: 2000px;
+    top: -2000px
+  }
+
+
+
+
+  
+  /* Blueprint Styles */
+  #blueprint {
+    position: relative;
+    width: 1500px;
+    height: 2000px;
+    overflow: hidden;
+    background: #222;
+    color: #fff;
+  }
+  
+  #bp-image {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-size: cover;
+    background-position: center;
+    z-index: 1;
+    opacity: 0.8;
+  }
+  
+  .overlay {
+    position: absolute;
+    left: 0;
+    width: 100%;
+    z-index: 2;
+  }
+  
+  .overlay-bottom {
+    bottom: 0;
+    height: 300px;
+    background: linear-gradient(180deg, rgba(0,0,0,0) 0%, rgba(0,0,0,0.5) 100%);
+  }
+  
+  .overlay-top {
+    top: 0;
+    height: 300px;
+    background: linear-gradient(180deg, rgba(0,0,0,0.5) 0%, rgba(0,0,0,0) 100%);
+  }
+  
+  .bp-text {
+    z-index: 3;
+    font-weight: 500;
+    position: relative;
+  }
+  
+  .info-box {
+    position: absolute;
+    top: 50px;
+    left: 50px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    font-weight: 400;
+    font-size: 40px;
+    z-index: 3;
+  }
+  
+  .row {
+    display: flex;
+    flex-direction: row;
+    gap: 30px;
+  }
+  
+  .live-badge {
+    display: inline-flex;
+    align-items: center;
+    color: #FFBCD9;
+    line-height: 1;
+    font-weight: 700;
+  }
+  
+#blueprint .live-badge::before {
+    content: "";
+    display: inline-block;
+    width: 20px;
+    height: 20px;
+    margin-right: 15px;
+    background-color: #FFBCD9;
+    border-radius: 50%;
+  }
+  
+  #city { color: #fff; }
+  #bp-date, #bp-time { color: #fff; }
+  
+  .show-info {
+    position: absolute;
+    bottom: 50px;
+    left: 50px;
+    z-index: 3;
+  }
+  
+  #bp-artist {
+    font-size: 55px;
+    font-weight: 400;
+    text-transform: uppercase;
+  }
+  
+  #bp-show {
+    text-transform: uppercase;
+    font-size: 75px;
+    font-weight: 700;
+  }
+  
+  .graphic {
+    position: absolute;
+    left: 400px;
+    bottom: -100px;
+    width: 1200px;
+    z-index: 4;
+  }
+  
+  .wortmarke {
+    position: absolute;
+    top: 500px;
+    right: -164px;
+    width: 500px;
+    z-index: 4;
+    transform: rotate(90deg);
+  }
+  
+  .bildmarke {
+    position: absolute;
+    top: 50px;
+    right: 50px;
+    width: 100px;
+    z-index: 4;
+  }
+  
+  /* Responsive Design */
+  @media (max-width: 480px) {
+    body {
+      margin: 20px 0; /* Reduce body margin on mobile */
+    }
+  
+    #frameForm {
+      width: 90%;
+      max-width: none; /* Remove max-width constraint on mobile */
+      padding: 15px;
+      margin: 0 auto 20px auto;
+    }
+  
+    .wortmarke-frontend {
+      width: 90%;
+      max-width: 300px;
+    }
+  
+    #previewArea {
+      width: 90%;
+      margin: 20px auto 50px auto;
+    }
+  
+    .graphic {
+      left: 200px;
+      width: 800px;
+    }
+  }
+
+  /* Additional responsive adjustments */
+  @media (max-width: 580px) {
+    .form-row {
+      flex-direction: column;
+      gap: 24px;
+    }
+
+    .date-time {
+      flex-direction: column;
+      gap: 24px;
+    }
+
+    .image-upload {
+      padding: 20px; /* Reduce padding on mobile */
+    }
+
+    input[type="date"],
+    input[type="time"],
+    input[type="text"],
+    select {
+      font-size: 16px; /* Better font size for mobile inputs */
+    }
+  }
+
+  /* Add container for better content alignment */
+  .container {
+    width: 90%;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 15px;
+  }
+
+  /* Square Blueprint Styles */
+  #blueprint_square {
+    position: relative;
+    width: 1500px;
+    height: 1500px;
+    overflow: hidden;
+    background: #222;
+    color: #fff;
+  }
+
+  #blueprint_square #bp-image {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-size: cover;
+    background-position: center;
+    z-index: 1;
+    opacity: 0.8;
+  }
+
+  #blueprint_square .bildmarke {
+    position: absolute;
+    top: 50px;
+    right: 50px;
+    width: 100px;
+    z-index: 4;
+  }
+
+  /* Blueprint Toggle Styles */
+  .blueprint-toggle {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start; /* Align left */
+    margin: 20px 0; /* Remove auto margins */
+  }
+
+  .toggle-switch {
+    display: flex;
+    background: #333;
+    border-radius: 16px; /* Smaller radius */
+    padding: 3px; /* Smaller padding */
+    position: relative;
+  }
+
+  .toggle-option {
+    color: #666;
+    padding: 5px 12px; /* Smaller padding */
+    cursor: pointer;
+    border-radius: 14px; /* Smaller radius */
+    font-size: 12px; /* Smaller font */
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    font-weight: 500;
+    transition: all 0.3s ease;
+  }
+
+  .toggle-option.active {
+    background: #FFBCD9;
+    color: white;
+  }
+
+  /* Save Button States */
+  .checkmark {
+    display: inline-block;
+    margin-left: 8px;
+    font-weight: 500;
+  }
+
+  button.saved {
+    background: #78CE82;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+  }
+
+  button.saved:hover {
+    background: #78CE82;
+  }
+
+  /* Button Group styles */
+  .button-group {
+    display: flex;
+    gap: 10px;
+    margin-top: 20px;
+  }
+
+  .button-group button {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    white-space: nowrap;
+  }

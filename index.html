@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Instagram Frame Creator</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <img class="wortmarke-frontend" src="parts/wortmarke.svg" alt="Wortmarke">
+  <h1>Frame Generator</h1>
+
+  <form id="frameForm">
+    <label class="image-upload" id="uploadArea">
+      Drag & Drop or Click to Upload Image
+      <input type="file" id="imageInput" accept="image/*" required>
+    </label>
+
+    <div id="previewArea">
+      <img id="webpPreview">
+    </div>
+
+    <!-- Add this after the previewArea -->
+    <div class="blueprint-toggle">
+      <div class="toggle-switch">
+        <div class="toggle-option active" data-blueprint="original">3×4</div>
+        <div class="toggle-option" data-blueprint="square">1×1</div>
+      </div>
+    </div>
+
+    <!-- Form Fields -->
+    <label>
+      <input type="text" id="showInput" placeholder="Enter Show Name" required>
+    </label>
+    <label>
+      <input type="text" id="artistInput" placeholder="Enter Artists" required>
+    </label>
+   
+    <div class="date-time">
+      <div>
+        <label>
+          <input type="date" id="dateInput" required>
+        </label>
+      </div>
+      <div>
+        <label>
+          <input type="time" id="timeInput" required>
+        </label>
+      </div>
+    </div>
+    <label>
+      City
+      <select id="citySelect" required>
+        <option value="DUS">DUS</option>
+        <option value="LPZ">LPZ</option>
+        <option value="VIE">VIE</option>
+      </select>
+    </label>
+
+    <!-- Update the button area -->
+    <div class="button-group">
+      <button type="button" id="createFrame">save social (3x4)</button>
+      <button type="button" id="createSquareFrame">save square</button>
+    </div>
+  </form>
+
+  <!-- Hidden Export Container -->
+  <div id="exportContainer"></div>
+
+  <!-- Footer -->
+  <div class="footer">
+    <a class="cloud-link" href="https://callshopradio.com" target="_blank">
+      <img class="bildmarke-frontend" src="parts/bildmarke.svg" alt="Bildmarke">
+      <p>Upload to Cloud</p>
+    </a>
+    <p>Request Access</p>
+  </div>
+
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
+  <script src="functions.js"></script>
+</body>
+</html>
