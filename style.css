@@ -429,8 +429,8 @@
   /* Square Blueprint Styles */
   #blueprint_square {
     position: relative;
-    width: 1500px;
-    height: 1500px;
+    width: 1080px;
+    height: 1080px;
     overflow: hidden;
     background: #222;
     color: #fff;
@@ -607,7 +607,8 @@
     margin-left: -30px;
     border: 2px solid white;
     border-radius: 30px;
-    padding: 0px 18px;
+    padding: 0px 18px 3px 18px;
+
     display: inline-block;
     text-align: center;
     min-width: 60px;
