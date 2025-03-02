@@ -337,6 +337,7 @@
     text-transform: uppercase;
     font-size: 50px;
     font-weight: 700;
+    line-height: 0.8;
   }
   
   .graphic {
@@ -672,4 +673,78 @@
 
   #bp-date, #bp-time {
     font-weight: 700;
+  }
+
+  /* City and Export Mode Row */
+  .city-export-row {
+    display: flex;
+    gap: 20px;
+    margin-bottom: 20px;
+  }
+
+  .city-container, .export-mode-container {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .city-container label, .export-mode-container label {
+    margin-bottom: 8px;
+    font-weight: 500;
+    color: #333;
+    font-size: 15px;
+  }
+
+  /* Blue Toggle Styles */
+  .blue-toggle {
+    display: flex;
+    background: #333;
+    border-radius: 16px;
+    padding: 3px;
+    position: relative;
+    width: fit-content;
+  }
+
+  .blue-toggle .toggle-option {
+    color: #666;
+    padding: 5px 12px;
+    cursor: pointer;
+    border-radius: 14px;
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    font-weight: 500;
+    transition: all 0.3s ease;
+  }
+
+  .blue-toggle .toggle-option.active {
+    background: #557FB9;
+    color: white;
+  }
+
+  /* Update button styles */
+  #saveButton {
+    background: #557FB9;
+    width: 100%;
+    padding: 12px 20px;
+    border: none;
+    border-radius: 50px;
+    color: white;
+    font-size: 16px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  #saveButton:hover {
+    background: #78CE82;
+  }
+
+  #saveButton.saved {
+    background: #78CE82;
   }

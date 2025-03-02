@@ -20,7 +20,7 @@
       <img id="webpPreview">
     </div>
 
-    <!-- Update this section -->
+    <!-- Keep blueprint toggle and alignment controls right below the preview -->
     <div class="blueprint-toggle">
       <div class="controls-group">
         <div class="toggle-switch">
@@ -69,7 +69,7 @@
     <label>
       <input type="text" id="artistInput" placeholder="Enter Artists" required>
     </label>
-   
+
     <div class="date-time">
       <div>
         <label>
@@ -82,19 +82,29 @@
         </label>
       </div>
     </div>
-    <label>
-      City
-      <select id="citySelect" required>
-        <option value="DUS">DUS</option>
-        <option value="LPZ">LPZ</option>
-        <option value="VIE">VIE</option>
-      </select>
-    </label>
 
-    <!-- Update the button area -->
+    <!-- City and export row right above the save button -->
+    <div class="city-export-row">
+      <div class="city-container">
+        <label for="citySelect">City</label>
+        <select id="citySelect" required>
+          <option value="DUS">DUS</option>
+          <option value="LPZ">LPZ</option>
+          <option value="VIE">VIE</option>
+        </select>
+      </div>
+      <div class="export-mode-container">
+        <label>Export Mode</label>
+        <div class="toggle-switch blue-toggle">
+          <div class="toggle-option active" data-export-mode="current">Current</div>
+          <div class="toggle-option" data-export-mode="all">All</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Save button right after the city-export row -->
     <div class="button-group">
-      <button type="button" id="createFrame">save social (3x4)</button>
-      <button type="button" id="createSquareFrame">save square</button>
+      <button type="button" id="saveButton">EXPORT!</button>
     </div>
   </form>
 
