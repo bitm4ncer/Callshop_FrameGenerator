@@ -22,20 +22,32 @@ let currentExportMode = "current";
 
 // Initialization
 $(document).ready(() => {
-  // Set default date to first day of current month in 2025
-  const today = new Date();
-  const defaultDate = new Date(2025, today.getMonth(), 1);
-  const formattedDate = defaultDate.toISOString().split('T')[0];
+  // Set current date and time
+  const now = new Date();
+  
+  // Format date as YYYY-MM-DD for the date input
+  const year = now.getFullYear();
+  const month = String(now.getMonth() + 1).padStart(2, '0');
+  const day = String(now.getDate()).padStart(2, '0');
+  const formattedDate = `${year}-${month}-${day}`;
+  
+  // Format time as HH:MM for the time input
+  const hours = String(now.getHours()).padStart(2, '0');
+  const minutes = String(now.getMinutes()).padStart(2, '0');
+  const formattedTime = `${hours}:${minutes}`;
+  
+  // Set the values
   $("#dateInput").val(formattedDate);
+  $("#timeInput").val(formattedTime);
   
   // Load blueprint_social template by default
   $("#exportContainer").load("blueprint_social.html", () => {
     console.log("Blueprint social template loaded");
     updateBlueprint();
   });
-
+  
   // Set initial save button text
-  $("#saveButton").text("EXPORT!");
+  $("#saveButton").text("Save that frame!");
 });
 
 function updateBlueprint() {
