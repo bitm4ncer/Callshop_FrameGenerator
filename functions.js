@@ -233,7 +233,7 @@ $("#saveButton").on("click", function() {
     }
 });
 
-// Helper function to save a single blueprint
+// Helper function to save a single blueprint with specific dimensions
 function saveSingleBlueprint(blueprintType, formattedDate, showVal, artistVal, timeVal, cityVal) {
     const isSquare = blueprintType === "square";
     const fileName = `${formattedDate}_${showVal}${artistVal ? '_' + artistVal : ''}${isSquare ? '_square' : ''}.webp`;
@@ -242,15 +242,36 @@ function saveSingleBlueprint(blueprintType, formattedDate, showVal, artistVal, t
         const $bp = $("#exportContainer " + blueprints[blueprintType].container);
         updateBlueprintContent($bp);
         
+        // Set dimensions based on blueprint type
+        const width = 1080;
+        const height = isSquare ? 1080 : 1350;
+        
+        // Set container dimensions for proper rendering
+        $bp.css({
+            width: width + 'px',
+            height: height + 'px'
+        });
+        
         html2canvas($bp[0], {
-            scale: 2,
+            width: width,
+            height: height,
+            scale: 1, // Use scale 1 since we're setting exact dimensions
             useCORS: true,
             logging: true,
             backgroundColor: "#222"
         }).then(canvas => {
+            // Create a new canvas with the exact dimensions we want
+            const finalCanvas = document.createElement('canvas');
+            finalCanvas.width = width;
+            finalCanvas.height = height;
+            const ctx = finalCanvas.getContext('2d');
+            
+            // Draw the rendered content to our final canvas
+            ctx.drawImage(canvas, 0, 0, width, height);
+            
             const link = document.createElement("a");
             link.download = fileName;
-            link.href = canvas.toDataURL("image/webp", 1.0);
+            link.href = finalCanvas.toDataURL("image/webp", 1.0);
             link.click();
             
             // Add saved state
@@ -259,42 +280,96 @@ function saveSingleBlueprint(blueprintType, formattedDate, showVal, artistVal, t
             setTimeout(() => {
                 $("#saveButton").removeClass('saved').text("Save that frame!");
             }, 3000);
+            
+            // Reset container dimensions
+            $bp.css({
+                width: '',
+                height: ''
+            });
         });
     });
 }
 
-// Helper function to save all blueprints
+// Helper function to save all blueprints with specific dimensions
 function saveAllBlueprints(formattedDate, showVal, artistVal, timeVal, cityVal) {
-    // First save the social blueprint
+    // First save the social blueprint (1080x1350)
     $("#exportContainer").load(blueprints.original.template, () => {
         const $bp = $("#exportContainer " + blueprints.original.container);
         updateBlueprintContent($bp);
         
+        // Set dimensions for social format
+        const socialWidth = 1080;
+        const socialHeight = 1350;
+        
+        // Set container dimensions for proper rendering
+        $bp.css({
+            width: socialWidth + 'px',
+            height: socialHeight + 'px'
+        });
+        
         html2canvas($bp[0], {
-            scale: 2,
+            width: socialWidth,
+            height: socialHeight,
+            scale: 1,
             useCORS: true,
             logging: true,
             backgroundColor: "#222"
         }).then(canvas => {
+            // Create a new canvas with the exact dimensions we want
+            const finalCanvas = document.createElement('canvas');
+            finalCanvas.width = socialWidth;
+            finalCanvas.height = socialHeight;
+            const ctx = finalCanvas.getContext('2d');
+            
+            // Draw the rendered content to our final canvas
+            ctx.drawImage(canvas, 0, 0, socialWidth, socialHeight);
+            
             const link = document.createElement("a");
             link.download = `${formattedDate}_${showVal}${artistVal ? '_' + artistVal : ''}.webp`;
-            link.href = canvas.toDataURL("image/webp", 1.0);
+            link.href = finalCanvas.toDataURL("image/webp", 1.0);
             link.click();
             
-            // Now save the square blueprint
+            // Reset container dimensions
+            $bp.css({
+                width: '',
+                height: ''
+            });
+            
+            // Now save the square blueprint (1080x1080)
             $("#exportContainer").load(blueprints.square.template, () => {
                 const $bpSquare = $("#exportContainer " + blueprints.square.container);
                 updateBlueprintContent($bpSquare);
                 
+                // Set dimensions for square format
+                const squareWidth = 1080;
+                const squareHeight = 1080;
+                
+                // Set container dimensions for proper rendering
+                $bpSquare.css({
+                    width: squareWidth + 'px',
+                    height: squareHeight + 'px'
+                });
+                
                 html2canvas($bpSquare[0], {
-                    scale: 2,
+                    width: squareWidth,
+                    height: squareHeight,
+                    scale: 1,
                     useCORS: true,
                     logging: true,
                     backgroundColor: "#222"
                 }).then(canvas => {
+                    // Create a new canvas with the exact dimensions we want
+                    const finalCanvas = document.createElement('canvas');
+                    finalCanvas.width = squareWidth;
+                    finalCanvas.height = squareHeight;
+                    const ctx = finalCanvas.getContext('2d');
+                    
+                    // Draw the rendered content to our final canvas
+                    ctx.drawImage(canvas, 0, 0, squareWidth, squareHeight);
+                    
                     const link = document.createElement("a");
                     link.download = `${formattedDate}_${showVal}${artistVal ? '_' + artistVal : ''}_square.webp`;
-                    link.href = canvas.toDataURL("image/webp", 1.0);
+                    link.href = finalCanvas.toDataURL("image/webp", 1.0);
                     link.click();
                     
                     // Add saved state
@@ -303,6 +378,12 @@ function saveAllBlueprints(formattedDate, showVal, artistVal, timeVal, cityVal) 
                     setTimeout(() => {
                         $("#saveButton").removeClass('saved').text("Save that frame!");
                     }, 3000);
+                    
+                    // Reset container dimensions
+                    $bpSquare.css({
+                        width: '',
+                        height: ''
+                    });
                 });
             });
         });
