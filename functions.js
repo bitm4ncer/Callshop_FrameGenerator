@@ -1,100 +1,294 @@
+/**
+ * CALLSHOP.RADIO Frame Generator
+ * A tool to create social media graphics for radio shows
+ * Version 1.0
+ */
+
+// Global variables
 let uploadedImage = "";
 let previewTimeout;
 let currentBlueprint = "original";
+let currentAlignment = "center";
+let currentExportMode = "current";
+
+// Blueprint configurations
 const blueprints = {
   original: {
     template: "blueprint_social.html",
     container: "#blueprint",
-    scale: 2
+    dimensions: { width: 1080, height: 1350 }
   },
   square: {
     template: "blueprint_square.html",
     container: "#blueprint_square",
-    scale: 2
+    dimensions: { width: 1080, height: 1080 }
   }
 };
 
-// Add these variables at the top
-let socialSaved = false;
-let squareSaved = false;
-let currentAlignment = "center";
-let currentExportMode = "current";
+// Cache for loaded templates
+const templateCache = {};
 
-// Initialization
+/**
+ * Initialize the application
+ */
 $(document).ready(() => {
   // Set current date and time
+  setCurrentDateTime();
+  
+  // Load initial template
+  loadTemplate(currentBlueprint).then(() => {
+    console.log("Initial template loaded");
+    updateBlueprint();
+  });
+  
+  // Initialize button states
+  resetSaveStates();
+  
+  // Set up event listeners
+  setupEventListeners();
+  setupDragAndDrop();
+});
+
+/**
+ * Set up event listeners for form elements and buttons
+ */
+function setupEventListeners() {
+  // Form input change handlers
+  $("#artistInput, #showInput, #dateInput, #timeInput, #citySelect").on("input change", function() {
+    resetSaveStates();
+    updateBlueprintDebounced();
+  });
+  
+  // Image input change handler
+  $("#imageInput").on("change", handleImageUpload);
+  
+  // Export mode toggle
+  $(".export-mode-container .toggle-option").on("click", function() {
+    const exportMode = $(this).data("export-mode");
+    $(".export-mode-container .toggle-option").removeClass("active");
+    $(this).addClass("active");
+    currentExportMode = exportMode;
+    resetSaveStates();
+  });
+  
+  // Blueprint format toggle
+  $(".blueprint-toggle .toggle-option").on("click", function() {
+    const blueprint = $(this).data("blueprint");
+    $(".blueprint-toggle .toggle-option").removeClass("active");
+    $(this).addClass("active");
+    currentBlueprint = blueprint;
+    
+    // Update preview aspect ratio
+    const ratio = blueprint === "square" ? "1 / 1" : "3 / 4";
+    $("#previewArea").css("--preview-ratio", ratio);
+    
+    // Load and update template
+    loadTemplate(blueprint).then(() => {
+      updateBlueprint();
+      resetSaveStates();
+    });
+  });
+  
+  // Image alignment controls
+  $(".align-btn").on("click", function() {
+    const alignment = $(this).data("align");
+    $(".align-btn").removeClass("active");
+    $(this).addClass("active");
+    currentAlignment = alignment;
+    updateBlueprint();
+});
+
+  // Export button handler
+  $("#saveButton").on("click", handleExport);
+  
+  // Date change handler (ensure template is reloaded for weekday)
+  $("#dateInput").on("change", function() {
+    loadTemplate(currentBlueprint).then(() => {
+      console.log("Template reloaded after date change");
+      updateBlueprint();
+    });
+  });
+}
+
+/**
+ * Set current date and time in form inputs
+ */
+function setCurrentDateTime() {
   const now = new Date();
   
-  // Format date as YYYY-MM-DD for the date input
+  // Format date as YYYY-MM-DD
   const year = now.getFullYear();
   const month = String(now.getMonth() + 1).padStart(2, '0');
   const day = String(now.getDate()).padStart(2, '0');
   const formattedDate = `${year}-${month}-${day}`;
   
-  // Format time as HH:MM for the time input
+  // Format time as HH:MM
   const hours = String(now.getHours()).padStart(2, '0');
   const minutes = String(now.getMinutes()).padStart(2, '0');
   const formattedTime = `${hours}:${minutes}`;
   
-  // Set the values
+  // Set values
   $("#dateInput").val(formattedDate);
   $("#timeInput").val(formattedTime);
-  
-  // Load blueprint_social template by default
-  $("#exportContainer").load("blueprint_social.html", () => {
-    console.log("Blueprint social template loaded");
-    updateBlueprint();
-  });
-  
-  // Set initial save button text
-  $("#saveButton").text("EXPORT!");
-});
+}
 
+/**
+ * Load a blueprint template with caching
+ * @param {string} blueprintType - The type of blueprint to load
+ * @returns {Promise} - A promise resolving when the template is loaded
+ */
+function loadTemplate(blueprintType) {
+  return new Promise((resolve, reject) => {
+    const template = blueprints[blueprintType].template;
+    
+    // Use cached template if available
+    if (templateCache[template]) {
+      $("#exportContainer").html(templateCache[template]);
+      resolve();
+      return;
+    }
+    
+    // Load template from file
+    $("#exportContainer").load(template, (response, status, xhr) => {
+      if (status === "error") {
+        console.error(`Error loading template: ${xhr.status} ${xhr.statusText}`);
+        reject(new Error(`Failed to load template: ${status}`));
+        return;
+      }
+      
+      // Cache the template
+      templateCache[template] = response;
+      resolve();
+    });
+  });
+}
+
+/**
+ * Handle image file upload
+ * @param {Event} e - The change event
+ */
+function handleImageUpload(e) {
+    resetSaveStates();
+    const file = e.target.files[0];
+  
+  if (!file) return;
+  
+  // Validate file is an image
+  if (!file.type.startsWith('image/')) {
+    alert('Please upload an image file');
+    return;
+  }
+  
+        const reader = new FileReader();
+        reader.onload = (e) => {
+            uploadedImage = e.target.result;
+    
+    // Ensure template is loaded before updating
+    if ($("#exportContainer " + blueprints[currentBlueprint].container).length === 0) {
+      loadTemplate(currentBlueprint).then(() => {
+        updateBlueprint();
+      });
+    } else {
+            updateBlueprint();
+    }
+        };
+        reader.readAsDataURL(file);
+    }
+
+/**
+ * Debounced version of updateBlueprint to prevent too many updates
+ */
+function updateBlueprintDebounced() {
+  // Make sure the correct blueprint is loaded before updating
+  if ($("#exportContainer " + blueprints[currentBlueprint].container).length === 0) {
+    loadTemplate(currentBlueprint).then(() => {
+      updateBlueprint();
+    });
+  } else {
+    updateBlueprint();
+  }
+}
+
+/**
+ * Update the blueprint with current form values and generate preview
+ */
 function updateBlueprint() {
   clearTimeout(previewTimeout);
   previewTimeout = setTimeout(() => {
     const blueprint = blueprints[currentBlueprint];
     const $bp = $("#exportContainer " + blueprint.container);
+    
     if (!$bp.length) {
       console.error("Blueprint container not found:", blueprint.container);
       return;
     }
 
-    const artistVal = $("#artistInput").val();
-    const showVal = $("#showInput").val();
-    const dateVal = $("#dateInput").val();
-    const timeVal = $("#timeInput").val();
-    const cityVal = $("#citySelect").val();
+    // Get form values
+    const values = getFormValues();
 
-    // Update Blueprint
-    $bp.find("#bp-image").css("background-image", `url(${uploadedImage})`);
-    $bp.find("#city").text(cityVal);
+    // Update blueprint content
+    updateBlueprintElements($bp, values);
+
+    // Generate preview
+    generatePreview($bp[0]);
+  }, 300);
+}
+
+/**
+ * Get all form input values
+ * @returns {Object} - Object containing form values
+ */
+function getFormValues() {
+  return {
+    artist: $("#artistInput").val(),
+    show: $("#showInput").val(),
+    date: $("#dateInput").val(),
+    time: $("#timeInput").val(),
+    city: $("#citySelect").val()
+  };
+}
+
+/**
+ * Update blueprint elements with form values
+ * @param {jQuery} $bp - jQuery object for the blueprint container
+ * @param {Object} values - Object containing form values
+ */
+function updateBlueprintElements($bp, values) {
+  // Update image and alignment
+  $bp.find("#bp-image").css({
+    "background-image": `url(${uploadedImage})`,
+    "background-position": getBackgroundPosition(currentAlignment)
+  });
+  
+  // Update city
+  $bp.find("#city").text(values.city);
     
     // Format date and update weekday
-    if (dateVal) {
-      const [year, month, day] = dateVal.split('-');
+  if (values.date) {
+    const [year, month, day] = values.date.split('-');
       const date = new Date(year, month - 1, day);
       const weekdays = ['SUN', 'MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT'];
       const weekday = weekdays[date.getDay()];
       
       $bp.find("#bp-date").text(`${day}.${month}.${year}`);
       $bp.find("#bp-weekday").text(weekday);
-      console.log("Updated weekday in updateBlueprint:", weekday);
     } else {
       $bp.find("#bp-date").text("");
       $bp.find("#bp-weekday").text("");
     }
     
-    $bp.find("#bp-time").text(timeVal);
-    $bp.find("#bp-show").text(showVal);
-    $bp.find("#bp-artist").text(artistVal);
+  // Update time, show and artist
+  $bp.find("#bp-time").text(values.time);
+  $bp.find("#bp-show").text(values.show);
+  $bp.find("#bp-artist").text(values.artist);
+}
 
-    // Update image alignment
-    const $bpImage = $bp.find("#bp-image");
-    $bpImage.css("background-position", getBackgroundPosition(currentAlignment));
-
-    // Generate preview
-    html2canvas($bp[0], {
+/**
+ * Generate preview image
+ * @param {HTMLElement} element - The blueprint element to render
+ */
+function generatePreview(element) {
+  html2canvas(element, {
       scale: 1,
       useCORS: true,
       logging: false,
@@ -106,343 +300,189 @@ function updateBlueprint() {
       const preview = $("#webpPreview");
       preview.attr("src", canvas.toDataURL("image/webp", 1.0));
       preview.css("display", "block");
-      console.log("Preview updated successfully");
     }).catch(error => {
       console.error("Error generating preview:", error);
     });
-  }, 300);
 }
 
-// Add function to check if any input has changed
-function resetSaveStates() {
-    $("#saveButton").removeClass('saved').text("EXPORT!");
-}
+/**
+ * Handle export button click
+ */
+function handleExport() {
+  // Validate form inputs
+  if (!validateExportInputs()) return;
 
-// Modify the input change handlers to reset save states and update preview
-$("#artistInput, #showInput, #dateInput, #timeInput, #citySelect").on("input change", function() {
-    resetSaveStates();
-    
-    // Make sure the correct blueprint is loaded before updating
-    if ($("#exportContainer " + blueprints[currentBlueprint].container).length === 0) {
-        $("#exportContainer").load(blueprints[currentBlueprint].template, () => {
-            console.log(`Loaded template: ${blueprints[currentBlueprint].template}`);
-            updateBlueprint();
-        });
-    } else {
-        updateBlueprint();
-    }
-});
-
-// Add handler for image changes
-$("#imageInput").on("change", function(e) {
-    resetSaveStates();
-    const file = e.target.files[0];
-    if (file) {
-        const reader = new FileReader();
-        reader.onload = (e) => {
-            uploadedImage = e.target.result;
-            // Make sure the correct blueprint is loaded before updating
-            if ($("#exportContainer " + blueprints[currentBlueprint].container).length === 0) {
-                $("#exportContainer").load(blueprints[currentBlueprint].template, () => {
-                    console.log(`Loaded template: ${blueprints[currentBlueprint].template}`);
-                    updateBlueprint();
-                });
+  // Get form values
+  const values = getFormValues();
+  
+  // Format date for filename
+  const [year, month, day] = values.date.split('-');
+  const formattedDate = `${year}_${month}_${day}`;
+  
+  // Export based on mode
+  if (currentExportMode === "current") {
+    exportSingleBlueprint(currentBlueprint, formattedDate, values);
             } else {
-                updateBlueprint();
-            }
-        };
-        reader.readAsDataURL(file);
-    }
-});
+    exportAllBlueprints(formattedDate, values);
+  }
+}
 
-// Update the export mode toggle functionality
-$(".export-mode-container .toggle-option").on("click", function() {
-    const exportMode = $(this).data("export-mode");
-    $(".export-mode-container .toggle-option").removeClass("active");
-    $(this).addClass("active");
-    currentExportMode = exportMode;
-    resetSaveStates();
-});
-
-// Update toggle functionality to also update save button text
-$(".blueprint-toggle .toggle-option").on("click", function() {
-    const blueprint = $(this).data("blueprint");
-    $(".blueprint-toggle .toggle-option").removeClass("active");
-    $(this).addClass("active");
-    currentBlueprint = blueprint;
-    
-    // Update preview aspect ratio
-    const ratio = blueprint === "square" ? "1 / 1" : "3 / 4";
-    $("#previewArea").css("--preview-ratio", ratio);
-    
-    // Update save button text if in "current" mode
-    if (currentExportMode === "current") {
-        $("#saveButton").text(`Save ${blueprint === "original" ? "Social (3×4)" : "Square"}`);
-    }
-    
-    // Load new blueprint template
-    $("#exportContainer").load(blueprints[blueprint].template, () => {
-        console.log(`Loaded template: ${blueprints[blueprint].template}`);
-        updateBlueprint();
-        resetSaveStates();
-    });
-});
-
-// Replace the two save button handlers with a single one
-$("#saveButton").on("click", function() {
-    // Check all required fields
-    const artistVal = $("#artistInput").val().trim();
-    const showVal = $("#showInput").val().trim();
-    const dateVal = $("#dateInput").val().trim();
-    const timeVal = $("#timeInput").val().trim();
-    const cityVal = $("#citySelect").val();
-
-    // Check if required fields are empty
+/**
+ * Validate required inputs before export
+ * @returns {boolean} - True if valid, false otherwise
+ */
+function validateExportInputs() {
+  const values = getFormValues();
+  
+  // Check required fields
     if (!uploadedImage) {
         alert("Please select an image first");
-        return;
+    return false;
     }
-    if (!showVal) {
+  if (!values.show) {
         alert("Please enter a show name");
-        return;
+    return false;
     }
-    if (!dateVal) {
+  if (!values.date) {
         alert("Please select a date");
-        return;
+    return false;
     }
-    if (!timeVal && currentExportMode === "current" && currentBlueprint === "original") {
+  
+  // Additional checks for social format
+  if (currentExportMode === "current" && currentBlueprint === "original") {
+    if (!values.time) {
         alert("Please select a time");
-        return;
+      return false;
     }
-    if (!cityVal && currentExportMode === "current" && currentBlueprint === "original") {
+    if (!values.city) {
         alert("Please select a city");
-        return;
+      return false;
     }
+  }
+  
+  return true;
+}
 
-    // Format date as yyyy_mm_dd
-    const [year, month, day] = dateVal.split('-');
-    const formattedDate = `${year}_${month}_${day}`;
+/**
+ * Export a single blueprint
+ * @param {string} blueprintType - Type of blueprint to export
+ * @param {string} formattedDate - Formatted date for filename
+ * @param {Object} values - Form values
+ */
+function exportSingleBlueprint(blueprintType, formattedDate, values) {
+  const isSquare = blueprintType === "square";
+  const fileName = `${formattedDate}_${values.show}${values.artist ? '_' + values.artist : ''}${isSquare ? '_square' : ''}.webp`;
+  
+  loadTemplate(blueprintType).then(() => {
+    const $bp = $("#exportContainer " + blueprints[blueprintType].container);
+    const dimensions = blueprints[blueprintType].dimensions;
     
-    // Save based on export mode
-    if (currentExportMode === "current") {
-        // Save only the current blueprint
-        saveSingleBlueprint(currentBlueprint, formattedDate, showVal, artistVal, timeVal, cityVal);
-    } else {
-        // Save all blueprints
-        saveAllBlueprints(formattedDate, showVal, artistVal, timeVal, cityVal);
-    }
-});
+    // Update content and render
+    updateBlueprintElements($bp, values);
+    renderAndDownload($bp[0], fileName, dimensions);
+  });
+}
 
-// Helper function to save a single blueprint with specific dimensions
-function saveSingleBlueprint(blueprintType, formattedDate, showVal, artistVal, timeVal, cityVal) {
-    const isSquare = blueprintType === "square";
-    const fileName = `${formattedDate}_${showVal}${artistVal ? '_' + artistVal : ''}${isSquare ? '_square' : ''}.webp`;
+/**
+ * Export all blueprint formats
+ * @param {string} formattedDate - Formatted date for filename
+ * @param {Object} values - Form values
+ */
+function exportAllBlueprints(formattedDate, values) {
+  // First export social format
+  loadTemplate("original").then(() => {
+    const $bp = $("#exportContainer " + blueprints.original.container);
+    const dimensions = blueprints.original.dimensions;
+    const fileName = `${formattedDate}_${values.show}${values.artist ? '_' + values.artist : ''}.webp`;
     
-    $("#exportContainer").load(blueprints[blueprintType].template, () => {
-        const $bp = $("#exportContainer " + blueprints[blueprintType].container);
-        updateBlueprintContent($bp);
+    updateBlueprintElements($bp, values);
+    
+    // Render and download, then handle square format
+    renderAndDownload($bp[0], fileName, dimensions, false).then(() => {
+      // Now export square format
+      loadTemplate("square").then(() => {
+        const $bpSquare = $("#exportContainer " + blueprints.square.container);
+        const dimensionsSquare = blueprints.square.dimensions;
+        const fileNameSquare = `${formattedDate}_${values.show}${values.artist ? '_' + values.artist : ''}_square.webp`;
         
-        // Set dimensions based on blueprint type
-        const width = 1080;
-        const height = isSquare ? 1080 : 1350;
-        
-        // Set container dimensions for proper rendering
-        $bp.css({
-            width: width + 'px',
-            height: height + 'px'
+        updateBlueprintElements($bpSquare, values);
+        renderAndDownload($bpSquare[0], fileNameSquare, dimensionsSquare, true);
+            });
         });
-        
-        html2canvas($bp[0], {
-            width: width,
-            height: height,
-            scale: 1, // Use scale 1 since we're setting exact dimensions
+    });
+}
+
+/**
+ * Render and download a blueprint
+ * @param {HTMLElement} element - Element to render
+ * @param {string} fileName - Download filename
+ * @param {Object} dimensions - Width and height dimensions
+ * @param {boolean} updateButtonState - Whether to update button state after download
+ * @returns {Promise} - Promise resolving when download is complete
+ */
+function renderAndDownload(element, fileName, dimensions, updateButtonState = true) {
+  return new Promise((resolve) => {
+    // Set dimensions for rendering
+    $(element).css({
+      width: dimensions.width + 'px',
+      height: dimensions.height + 'px'
+    });
+    
+    html2canvas(element, {
+      width: dimensions.width,
+      height: dimensions.height,
+            scale: 1,
             useCORS: true,
-            logging: true,
+      logging: false,
             backgroundColor: "#222"
         }).then(canvas => {
-            // Create a new canvas with the exact dimensions we want
+      // Create final canvas with exact dimensions
             const finalCanvas = document.createElement('canvas');
-            finalCanvas.width = width;
-            finalCanvas.height = height;
+      finalCanvas.width = dimensions.width;
+      finalCanvas.height = dimensions.height;
             const ctx = finalCanvas.getContext('2d');
             
-            // Draw the rendered content to our final canvas
-            ctx.drawImage(canvas, 0, 0, width, height);
+      // Draw rendered content
+      ctx.drawImage(canvas, 0, 0, dimensions.width, dimensions.height);
             
+      // Download the image
             const link = document.createElement("a");
             link.download = fileName;
             link.href = finalCanvas.toDataURL("image/webp", 1.0);
             link.click();
             
-            // Add saved state
-            $("#saveButton").addClass('saved').html('EXPORTED! <span class="checkmark">✓</span>');
-            
-            setTimeout(() => {
-                $("#saveButton").removeClass('saved').text("EXPORT!");
-            }, 3000);
-            
-            // Reset container dimensions
-            $bp.css({
-                width: '',
-                height: ''
-            });
-        });
-    });
-}
-
-// Helper function to save all blueprints with specific dimensions
-function saveAllBlueprints(formattedDate, showVal, artistVal, timeVal, cityVal) {
-    // First save the social blueprint (1080x1350)
-    $("#exportContainer").load(blueprints.original.template, () => {
-        const $bp = $("#exportContainer " + blueprints.original.container);
-        updateBlueprintContent($bp);
-        
-        // Set dimensions for social format
-        const socialWidth = 1080;
-        const socialHeight = 1350;
-        
-        // Set container dimensions for proper rendering
-        $bp.css({
-            width: socialWidth + 'px',
-            height: socialHeight + 'px'
-        });
-        
-        html2canvas($bp[0], {
-            width: socialWidth,
-            height: socialHeight,
-            scale: 1,
-            useCORS: true,
-            logging: true,
-            backgroundColor: "#222"
-        }).then(canvas => {
-            // Create a new canvas with the exact dimensions we want
-            const finalCanvas = document.createElement('canvas');
-            finalCanvas.width = socialWidth;
-            finalCanvas.height = socialHeight;
-            const ctx = finalCanvas.getContext('2d');
-            
-            // Draw the rendered content to our final canvas
-            ctx.drawImage(canvas, 0, 0, socialWidth, socialHeight);
-            
-            const link = document.createElement("a");
-            link.download = `${formattedDate}_${showVal}${artistVal ? '_' + artistVal : ''}.webp`;
-            link.href = finalCanvas.toDataURL("image/webp", 1.0);
-            link.click();
-            
-            // Reset container dimensions
-            $bp.css({
+      // Reset element dimensions
+      $(element).css({
                 width: '',
                 height: ''
             });
             
-            // Now save the square blueprint (1080x1080)
-            $("#exportContainer").load(blueprints.square.template, () => {
-                const $bpSquare = $("#exportContainer " + blueprints.square.container);
-                updateBlueprintContent($bpSquare);
-                
-                // Set dimensions for square format
-                const squareWidth = 1080;
-                const squareHeight = 1080;
-                
-                // Set container dimensions for proper rendering
-                $bpSquare.css({
-                    width: squareWidth + 'px',
-                    height: squareHeight + 'px'
-                });
-                
-                html2canvas($bpSquare[0], {
-                    width: squareWidth,
-                    height: squareHeight,
-                    scale: 1,
-                    useCORS: true,
-                    logging: true,
-                    backgroundColor: "#222"
-                }).then(canvas => {
-                    // Create a new canvas with the exact dimensions we want
-                    const finalCanvas = document.createElement('canvas');
-                    finalCanvas.width = squareWidth;
-                    finalCanvas.height = squareHeight;
-                    const ctx = finalCanvas.getContext('2d');
-                    
-                    // Draw the rendered content to our final canvas
-                    ctx.drawImage(canvas, 0, 0, squareWidth, squareHeight);
-                    
-                    const link = document.createElement("a");
-                    link.download = `${formattedDate}_${showVal}${artistVal ? '_' + artistVal : ''}_square.webp`;
-                    link.href = finalCanvas.toDataURL("image/webp", 1.0);
-                    link.click();
-                    
-                    // Add saved state
+      // Update button state if requested
+      if (updateButtonState) {
                     $("#saveButton").addClass('saved').html('EXPORTED! <span class="checkmark">✓</span>');
                     
                     setTimeout(() => {
                         $("#saveButton").removeClass('saved').text("EXPORT!");
                     }, 3000);
-                    
-                    // Reset container dimensions
-                    $bpSquare.css({
-                        width: '',
-                        height: ''
-                    });
-                });
-            });
-        });
+      }
+      
+      resolve();
     });
-}
-
-// Add helper function to update blueprint content
-function updateBlueprintContent($bp) {
-    const artistVal = $("#artistInput").val();
-    const showVal = $("#showInput").val();
-    const dateVal = $("#dateInput").val();
-    const timeVal = $("#timeInput").val();
-    const cityVal = $("#citySelect").val();
-
-    $bp.find("#bp-image").css({
-        "background-image": `url(${uploadedImage})`,
-        "background-position": getBackgroundPosition(currentAlignment)
-    });
-    $bp.find("#city").text(cityVal);
-    
-    // Format date as DD.MM.YYYY and get weekday
-    if (dateVal) {
-        const [year, month, day] = dateVal.split('-');
-        const date = new Date(year, month - 1, day); // month is 0-indexed in JavaScript
-        
-        // Get weekday abbreviation (MON, TUE, WED, etc.)
-        const weekdays = ['SUN', 'MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT'];
-        const weekday = weekdays[date.getDay()];
-        
-        // Format the date
-        const formattedDate = `${day}.${month}.${year}`;
-        
-        // Update the HTML - use explicit selectors
-        $bp.find("#bp-date").text(formattedDate);
-        $bp.find("#bp-weekday").text(weekday);
-        
-        // Log for debugging
-        console.log("Updated weekday to:", weekday);
-        console.log("Weekday element found:", $bp.find("#bp-weekday").length > 0);
-    } else {
-        $bp.find("#bp-date").text("");
-        $bp.find("#bp-weekday").text("");
-    }
-    
-    $bp.find("#bp-time").text(timeVal);
-    $bp.find("#bp-show").text(showVal);
-    $bp.find("#bp-artist").text(artistVal);
-}
-
-// Add this to your existing code
-$(".align-btn").on("click", function() {
-    const alignment = $(this).data("align");
-    $(".align-btn").removeClass("active");
-    $(this).addClass("active");
-    currentAlignment = alignment;
-    updateBlueprint();
 });
+}
 
-// Add this helper function
+/**
+ * Reset save button states
+ */
+function resetSaveStates() {
+  $("#saveButton").removeClass('saved').text("EXPORT!");
+}
+
+/**
+ * Get CSS background-position value based on alignment
+ * @param {string} alignment - Image alignment (center, top, bottom, left, right)
+ * @returns {string} - CSS background-position value
+ */
 function getBackgroundPosition(alignment) {
     switch(alignment) {
         case "top": return "center top";
@@ -453,11 +493,74 @@ function getBackgroundPosition(alignment) {
     }
 }
 
-// Add specific handler for date changes
-$("#dateInput").on("change", function() {
-    // Force reload of the template to ensure all elements are present
-    $("#exportContainer").load(blueprints[currentBlueprint].template, () => {
-        console.log("Template reloaded after date change");
-        updateBlueprint();
-    });
-});
+/**
+ * Set up drag and drop functionality for image upload
+ */
+function setupDragAndDrop() {
+const imageUpload = document.querySelector('.image-upload');
+
+imageUpload.addEventListener('dragenter', preventDefaults);
+imageUpload.addEventListener('dragover', preventDefaults);
+imageUpload.addEventListener('dragleave', handleDragLeave);
+imageUpload.addEventListener('drop', handleDrop);
+}
+
+/**
+ * Prevent default drag and drop behavior and highlight drop zone
+ * @param {Event} e - The drag event
+ */
+function preventDefaults(e) {
+    e.preventDefault();
+    e.stopPropagation();
+  const imageUpload = document.querySelector('.image-upload');
+  imageUpload.style.borderColor = '#F794B3';
+    imageUpload.style.color = '#F794B3';
+}
+
+/**
+ * Handle drag leave event
+ * @param {Event} e - The drag event
+ */
+function handleDragLeave(e) {
+    e.preventDefault();
+    e.stopPropagation();
+  const imageUpload = document.querySelector('.image-upload');
+  imageUpload.style.borderColor = '#ccc';
+    imageUpload.style.color = '#888';
+}
+
+/**
+ * Handle file drop event
+ * @param {Event} e - The drop event
+ */
+function handleDrop(e) {
+    e.preventDefault();
+    e.stopPropagation();
+    
+  const imageUpload = document.querySelector('.image-upload');
+  imageUpload.style.borderColor = '#ccc';
+    imageUpload.style.color = '#888';
+
+  const files = e.dataTransfer.files;
+
+    if (files.length) {
+        const file = files[0];
+    
+        if (file.type.startsWith('image/')) {
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                uploadedImage = e.target.result;
+                updateBlueprint();
+                
+        // Update file input for form
+                const fileInput = document.getElementById('imageInput');
+                const dataTransfer = new DataTransfer();
+                dataTransfer.items.add(file);
+                fileInput.files = dataTransfer.files;
+            };
+            reader.readAsDataURL(file);
+        } else {
+            alert('Please upload an image file');
+        }
+    }
+}
