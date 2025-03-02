@@ -47,7 +47,7 @@ $(document).ready(() => {
   });
   
   // Set initial save button text
-  $("#saveButton").text("Save that frame!");
+  $("#saveButton").text("EXPORT!");
 });
 
 function updateBlueprint() {
@@ -275,10 +275,10 @@ function saveSingleBlueprint(blueprintType, formattedDate, showVal, artistVal, t
             link.click();
             
             // Add saved state
-            $("#saveButton").addClass('saved').html('Frame saved! <span class="checkmark">✓</span>');
+            $("#saveButton").addClass('saved').html('EXPORTED! <span class="checkmark">✓</span>');
             
             setTimeout(() => {
-                $("#saveButton").removeClass('saved').text("Save that frame!");
+                $("#saveButton").removeClass('saved').text("EXPORT!");
             }, 3000);
             
             // Reset container dimensions
@@ -373,10 +373,10 @@ function saveAllBlueprints(formattedDate, showVal, artistVal, timeVal, cityVal) 
                     link.click();
                     
                     // Add saved state
-                    $("#saveButton").addClass('saved').html('Frames saved! <span class="checkmark">✓</span>');
+                    $("#saveButton").addClass('saved').html('EXPORTED! <span class="checkmark">✓</span>');
                     
                     setTimeout(() => {
-                        $("#saveButton").removeClass('saved').text("Save that frame!");
+                        $("#saveButton").removeClass('saved').text("EXPORT!");
                     }, 3000);
                     
                     // Reset container dimensions

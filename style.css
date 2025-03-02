@@ -734,14 +734,14 @@
     border-radius: 50px;
     color: white;
     font-size: 16px;
-    font-weight: 500;
+    font-weight: 700;
     cursor: pointer;
     transition: all 0.3s ease;
     display: flex;
     align-items: center;
     justify-content: center;
     text-transform: uppercase;
-    letter-spacing: 0.5px;
+    letter-spacing: 1px;
   }
 
   #saveButton:hover {
