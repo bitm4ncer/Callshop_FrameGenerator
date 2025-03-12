@@ -530,6 +530,7 @@
     color: #666;
     font-family: "IconaSans", sans-serif;
     font-weight: 500;
+    transition: all 0.3s ease;
   }
 
   .overlay-toggle .toggle-option.active {
@@ -537,6 +538,15 @@
     color: #333;
     font-weight: 700;
   }
+
+
+  .overlay-toggle .toggle-option:not(.active):hover {
+    color:#E8E8E8;
+
+  }
+
+
+  
 
   /* Toggle Switch Styles */
   .toggle-switch {
@@ -574,6 +584,13 @@
     background: #FFBCD9;
     color: white;
   }
+
+
+.toggle-option:not(.active):hover {
+    color:#FFBCD9;
+
+  }
+  
 
   /* Save Button States */
   .checkmark {
@@ -852,6 +869,11 @@
   .blue-toggle .toggle-option.active {
     background: #557FB9;
     color: white;
+  }
+
+  .blue-toggle .toggle-option:not(.active):hover {
+    color:#557FB9;
+
   }
 
   /* Update button styles - reverting to original */
