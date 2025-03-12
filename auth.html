@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>OneDrive Authentication</title>
+  <script>
+    // Token aus der URL extrahieren
+    function getTokenFromHash() {
+      const hash = window.location.hash.substring(1);
+      const params = new URLSearchParams(hash);
+      return params.get('access_token');
+    }
+    
+    // Nach dem Laden der Seite
+    window.onload = function() {
+      const token = getTokenFromHash();
+      if (token) {
+        // Token an die Hauptseite senden
+        window.opener.postMessage({ token: token }, window.location.origin);
+      } else {
+        document.body.innerHTML = "<p>Authentication failed. Please try again.</p>";
+      }
+    };
+  </script>
+</head>
+<body>
+  <p>Authentication successful. You can close this window.</p>
+</body>
+</html> 
