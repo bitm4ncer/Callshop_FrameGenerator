@@ -20,12 +20,23 @@
       <img id="webpPreview">
     </div>
 
+        <!-- Overlay toggle section -->
+        <div class="overlay-toggle-section">
+        
+          <div class="toggle-switch overlay-toggle">
+            <div class="toggle-option active" data-overlay="none"><span>off</span></div>
+            <div class="toggle-option" data-overlay="gray"><span>light</span></div>
+            <div class="toggle-option" data-overlay="black"><span>dark</span></div>
+        
+          </div>
+        </div>
+
     <!-- Keep blueprint toggle and alignment controls right below the preview -->
     <div class="blueprint-toggle">
       <div class="controls-group">
         <div class="toggle-switch">
-          <div class="toggle-option active" data-blueprint="original">3×4</div>
-          <div class="toggle-option" data-blueprint="square">1×1</div>
+          <div class="toggle-option active" data-blueprint="original"><span>3×4</span></div>
+          <div class="toggle-option" data-blueprint="square"><span>1×1</span></div>
         </div>
         <div class="alignment-controls">
           <button type="button" class="align-btn active" data-align="center">
@@ -62,6 +73,8 @@
       </div>
     </div>
 
+
+
     <!-- Form Fields -->
     <label>
       <input type="text" id="showInput" placeholder="Enter Show Name" required>
@@ -86,25 +99,51 @@
     <!-- City and export row right above the save button -->
     <div class="city-export-row">
       <div class="city-container">
-        <label for="citySelect">City</label>
-        <select id="citySelect" required>
-          <option value="DUS">DUS</option>
-          <option value="LPZ">LPZ</option>
-          <option value="VIE">VIE</option>
-        </select>
-      </div>
-      <div class="export-mode-container">
-        <label>Export Mode</label>
-        <div class="toggle-switch blue-toggle">
-          <div class="toggle-option active" data-export-mode="current">Current</div>
-          <div class="toggle-option" data-export-mode="all">All</div>
+     
+        <div class="city-inputs">
+          <div class="select-row">
+            <select id="citySelect" required>
+              <option value="DUS">DUS</option>
+              <option value="LPZ">LPZ</option>
+              <option value="VIE">VIE</option>
+            </select>
+
+            <input type="text" id="customCityInput" placeholder="XYZ" maxlength="10">
+          </div>
+          <div class="custom-city-container">
+            
+           
+          </div>
+
+  
+
+
+
         </div>
       </div>
+
     </div>
 
     <!-- Save button right after the city-export row -->
+
+
+
+
+
     <div class="button-group">
+
       <button type="button" id="saveButton">EXPORT!</button>
+
+      <div class="export-mode-container">
+  
+        <div class="toggle-switch blue-toggle">
+          <div class="toggle-option active" data-export-mode="current"><span>Current</span></div>
+          <div class="toggle-option" data-export-mode="all"><span>All</span></div>
+        </div>
+      </div>
+
+      
+     
     </div>
   </form>
 

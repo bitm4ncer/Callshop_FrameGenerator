@@ -10,6 +10,7 @@ let previewTimeout;
 let currentBlueprint = "original";
 let currentAlignment = "center";
 let currentExportMode = "current";
+let currentOverlay = "none"; // Changed from "gray" to "none" as default overlay style
 
 // Blueprint configurations
 const blueprints = {
@@ -44,6 +45,10 @@ $(document).ready(() => {
   // Initialize button states
   resetSaveStates();
   
+  // Initialize overlay toggle - set "none" as active
+  $(".overlay-toggle .toggle-option").removeClass("active");
+  $(".overlay-toggle .toggle-option[data-overlay='none']").addClass("active");
+  
   // Set up event listeners
   setupEventListeners();
   setupDragAndDrop();
@@ -55,6 +60,22 @@ $(document).ready(() => {
 function setupEventListeners() {
   // Form input change handlers
   $("#artistInput, #showInput, #dateInput, #timeInput, #citySelect").on("input change", function() {
+    resetSaveStates();
+    updateBlueprintDebounced();
+  });
+  
+  // Custom city input handler - automatically handle city selection
+  $("#customCityInput").on("input", function() {
+    const customCityValue = $(this).val().trim();
+    
+    // If there's text in the custom city field, disable the dropdown
+    if (customCityValue !== "") {
+      $("#citySelect").prop("disabled", true).css("opacity", "0.5");
+    } else {
+      // If the custom city field is empty, enable the dropdown
+      $("#citySelect").prop("disabled", false).css("opacity", "1");
+    }
+    
     resetSaveStates();
     updateBlueprintDebounced();
   });
@@ -89,6 +110,16 @@ function setupEventListeners() {
     });
   });
   
+  // Overlay style toggle
+  $(".overlay-toggle .toggle-option").on("click", function() {
+    const overlay = $(this).data("overlay");
+    $(".overlay-toggle .toggle-option").removeClass("active");
+    $(this).addClass("active");
+    currentOverlay = overlay;
+    updateBlueprint();
+    resetSaveStates();
+  });
+  
   // Image alignment controls
   $(".align-btn").on("click", function() {
     const alignment = $(this).data("align");
@@ -96,7 +127,7 @@ function setupEventListeners() {
     $(this).addClass("active");
     currentAlignment = alignment;
     updateBlueprint();
-});
+  });
 
   // Export button handler
   $("#saveButton").on("click", handleExport);
@@ -239,12 +270,22 @@ function updateBlueprint() {
  * @returns {Object} - Object containing form values
  */
 function getFormValues() {
+  let cityValue;
+  
+  // Use custom city if it's not empty, otherwise use the dropdown
+  const customCityValue = $("#customCityInput").val().trim();
+  if (customCityValue !== "") {
+    cityValue = customCityValue;
+  } else {
+    cityValue = $("#citySelect").val();
+  }
+  
   return {
     artist: $("#artistInput").val(),
     show: $("#showInput").val(),
     date: $("#dateInput").val(),
     time: $("#timeInput").val(),
-    city: $("#citySelect").val()
+    city: cityValue
   };
 }
 
@@ -258,6 +299,15 @@ function updateBlueprintElements($bp, values) {
   $bp.find("#bp-image").css({
     "background-image": `url(${uploadedImage})`,
     "background-position": getBackgroundPosition(currentAlignment)
+  });
+  
+  // Update overlays based on selected style
+  $bp.find(".overlay").each(function() {
+    // Remove existing overlay classes
+    $(this).removeClass("overlay-gray overlay-black overlay-none");
+    
+    // Add the selected overlay class
+    $(this).addClass(`overlay-${currentOverlay}`);
   });
   
   // Update city
@@ -335,27 +385,27 @@ function validateExportInputs() {
   const values = getFormValues();
   
   // Check required fields
-    if (!uploadedImage) {
-        alert("Please select an image first");
+  if (!uploadedImage) {
+    alert("Please select an image first");
     return false;
-    }
+  }
   if (!values.show) {
-        alert("Please enter a show name");
+    alert("Please enter a show name");
     return false;
-    }
+  }
   if (!values.date) {
-        alert("Please select a date");
+    alert("Please select a date");
     return false;
-    }
+  }
   
   // Additional checks for social format
   if (currentExportMode === "current" && currentBlueprint === "original") {
     if (!values.time) {
-        alert("Please select a time");
+      alert("Please select a time");
       return false;
     }
     if (!values.city) {
-        alert("Please select a city");
+      alert("Please select a city");
       return false;
     }
   }

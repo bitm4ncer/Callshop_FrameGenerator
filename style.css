@@ -1,19 +1,22 @@
 @font-face {
     font-family: "IconaSans";
-    src: url("parts/IconaSans-Regular.woff") format("woff");
+    src: url("fonts/IconaSans-Regular.woff2") format("woff2"),
+         url("fonts/IconaSans-Regular.woff") format("woff");
     font-weight: 400;
     font-style: normal;
   }
   
   @font-face {
     font-family: "IconaSans";
-    src: url("parts/IconaSans-Medium.woff") format("woff");
+    src: url("fonts/IconaSans-Medium.woff2") format("woff2"),
+         url("fonts/IconaSans-Medium.woff") format("woff");
     font-weight: 600;
     font-style: normal;
   }
   @font-face {
     font-family: "IconaSans";
-    src: url("parts/IconaSans-Semibold.woff") format("woff");
+    src: url("fonts/IconaSans-Semibold.woff2") format("woff2"),
+         url("fonts/IconaSans-Semibold.woff") format("woff");
     font-weight: 700;
     font-style: normal;
   }
@@ -25,6 +28,7 @@
     background: black;
     color: #333;
     letter-spacing: 3%;
+
   }
   
   h1 {
@@ -219,15 +223,31 @@
 
   
   /* Blueprint Styles */
-  #blueprint {
+  #blueprint, #blueprint_square {
     position: relative;
-    width: 1080px;
-    height: 1350px;
     overflow: hidden;
     background: #222;
     color: #fff;
   }
-  
+
+  #blueprint {
+    width: 1080px;
+    height: 1350px;
+  }
+
+  #blueprint_square {
+    width: 1080px;
+    height: 1080px;
+  }
+
+  #blueprint_square .bildmarke {
+    position: absolute;
+    top: 50px;
+    right: 50px;
+    width: 100px;
+    z-index: 4;
+  }
+
   #bp-image {
     position: absolute;
     top: 0;
@@ -237,38 +257,71 @@
     background-size: cover;
     background-position: center;
     z-index: 1;
-    opacity: 0.8;
+    /*opacity: 0.8;*/
   }
-  
+
   .overlay {
     position: absolute;
     left: 0;
     width: 100%;
     z-index: 2;
   }
-  
+
   .overlay-bottom {
     bottom: 0;
-    height: 300px;
+    height: 680px;
+    opacity: 0.5;
+  }
+  
+  .overlay-top {
+    top: 0;
+    height: 680px;
+ 
+  }
+
+  /* Overlay styles - moved from inline to classes */
+  .overlay-gray {
     background: linear-gradient(
       to top, 
       rgba(111, 111, 111, 0.7) 0%, 
       rgba(104, 104, 104, 0.12) 58%, 
       rgba(103, 103, 103, 0) 88%
     );
-      }
-  
-  .overlay-top {
-    top: 0;
-    height: 300px;
+    opacity: 0.5;
+  }
+
+  .overlay-top.overlay-gray {
     background: linear-gradient(
       to bottom, 
       rgba(111, 111, 111, 0.7) 0%, 
       rgba(104, 104, 104, 0.12) 58%, 
       rgba(103, 103, 103, 0) 88%
     );
-      }
-  
+  }
+
+  .overlay-black {
+    background: linear-gradient(
+      to top, 
+      rgba(0, 0, 0, 0.7) 0%, 
+      rgba(0, 0, 0, 0.12) 58%, 
+      rgba(0, 0, 0, 0) 88%
+    );
+    opacity: 0.8;
+  }
+
+  .overlay-top.overlay-black {
+    background: linear-gradient(
+      to bottom, 
+      rgba(0, 0, 0, 0.7) 0%, 
+      rgba(0, 0, 0, 0.12) 58%, 
+      rgba(0, 0, 0, 0) 88%
+    );
+  }
+
+  .overlay-none {
+    background: none;
+  }
+
   .bp-text {
     z-index: 3;
     font-weight: 500;
@@ -277,7 +330,7 @@
   
   .info-box {
     position: absolute;
-    top: 50px;
+    top: 100px;
     left: 50px;
     display: flex;
     flex-direction: column;
@@ -285,6 +338,7 @@
     font-weight: 700;
     font-size: 35px;
     z-index: 3;
+    line-height: 1.5;
   }
   
   .row {
@@ -312,7 +366,7 @@
     display: inline-block;
     width: 20px;
     height: 20px;
-    margin-right: 15px;
+    margin-right: 10px;
     background-color: #FFBCD9;
     border-radius: 50%;
   }
@@ -322,30 +376,37 @@
   
   .show-info {
     position: absolute;
-    bottom: 50px;
-    left: 50px;
-    z-index: 3;
+    bottom: 170px;
+    left: 35px;
+    z-index: 5;
   }
   
   #bp-artist {
     font-size: 35px;
     font-weight: 700;
-    line-height: 0.9;
+    line-height: 1.05;
     text-transform: uppercase;
+    padding-bottom: 10px;
+    z-index: 5;
+  
+  
   }
   
   #bp-show {
+   
     text-transform: uppercase;
-    font-size: 50px;
+    font-size: 55px;
     font-weight: 700;
-    line-height: 0.9;
+    line-height: 1.05;
     padding-right: 50px;
+    /*padding-left: 100px; */
+    z-index: 5;;
   }
   
   .graphic {
     position: absolute;
     left: 250px;
-    bottom: -20px;
+    bottom: -2px;
     width: 1050px;
     z-index: 4;
   }
@@ -361,8 +422,8 @@
   
   .bildmarke {
     position: absolute;
-    top: 50px;
-    right: 50px;
+    top: 182px;
+    right: 35px;
     width: 85px;
     z-index: 4;
   }
@@ -428,36 +489,6 @@
     padding: 0 15px;
   }
 
-  /* Square Blueprint Styles */
-  #blueprint_square {
-    position: relative;
-    width: 1080px;
-    height: 1080px;
-    overflow: hidden;
-    background: #222;
-    color: #fff;
-  }
-
-  #blueprint_square #bp-image {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-size: cover;
-    background-position: center;
-    z-index: 1;
-    opacity: 0.8;
-  }
-
-  #blueprint_square .bildmarke {
-    position: absolute;
-    top: 50px;
-    right: 50px;
-    width: 100px;
-    z-index: 4;
-  }
-
   /* Blueprint Toggle Styles */
   .blueprint-toggle {
     display: flex;
@@ -466,6 +497,42 @@
     margin: 20px 0; /* Remove auto margins */
   }
 
+  /* Overlay Toggle Section */
+  .overlay-toggle-section {
+    margin: 20px 0;
+  }
+
+  .overlay-toggle-section label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 500;
+    color: #333;
+    font-size: 15px;
+  }
+
+  .overlay-toggle {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    background: #E8E8E8;
+  }
+
+  .overlay-toggle .toggle-option {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    line-height: 1;
+    color: #666;
+  }
+
+  .overlay-toggle .toggle-option.active {
+    background: #E8E8E8;
+    color: #333;
+    font-weight: 700;
+  }
+
+  /* Toggle Switch Styles */
   .toggle-switch {
     display: flex;
     background: #333;
@@ -484,6 +551,10 @@
     letter-spacing: 0.5px;
     font-weight: 500;
     transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    line-height: 1;
   }
 
   .toggle-option.active {
@@ -513,8 +584,10 @@
   /* Button Group styles */
   .button-group {
     display: flex;
+    flex-direction: column;
     gap: 10px;
     margin-top: 20px;
+
   }
 
   .button-group button {
@@ -577,15 +650,15 @@
   /* Modern Info Box Styles */
   .info-box.modern {
     position: absolute;
-    top: 50px;
-    left: 50px;
+    top: 170px;
+    left: 28px;
     display: flex;
     flex-direction: row;
     align-items: flex-start;
-    gap: 10px;
+    gap: 8px;
     font-weight: 700;
     font-size: 35px;
-    z-index: 3;
+    z-index: 5;
     text-transform: uppercase;
     letter-spacing: 1px;
   }
@@ -605,7 +678,7 @@
     font-weight: 700;
     transform: rotate(90deg);
     transform-origin: center center;
-    margin-top: -17px;
+    margin-top: -13px;
     margin-left: -30px;
     border: 2px solid white;
     border-radius: 30px;
@@ -627,6 +700,7 @@
     flex-direction: column;
     gap: 0px;
     margin-left: 65px;
+    margin-top: 4px;
   }
 
   .info-box.modern .row {
@@ -656,7 +730,7 @@
     display: inline-block;
     width: 16px;
     height: 16px;
-    margin-right: 10px;
+    margin-right: 8px;
     margin-top: 4px;
     background-color: #FFBCD9;
     border-radius: 50%;
@@ -698,6 +772,53 @@
     font-size: 15px;
   }
 
+  /* City Inputs Container */
+  .city-inputs {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  /* Select Row */
+  .select-row {
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    gap: 10px;
+  }
+
+  /* City Selection Row - Improved layout without toggle */
+  .city-selection-row {
+    display: flex;
+    gap: 10px;
+    width: 100%;
+    align-items: flex-start;
+  }
+
+  .city-selection-row .select-row {
+    flex: 1;
+    min-width: 100px;
+  }
+
+  .city-selection-row .custom-city-field {
+    flex: 2;
+  }
+
+  /* Custom City Container - Simplified without toggle */
+  .custom-city-container {
+    display: flex;
+    width: 100%;
+  }
+
+  .custom-city-container input {
+    width: 100%;
+  }
+
+  /* Remove the toggle row since we don't need it anymore */
+  .custom-city-toggle-row {
+    display: none;
+  }
+
   /* Blue Toggle Styles */
   .blue-toggle {
     display: flex;
@@ -705,7 +826,8 @@
     border-radius: 16px;
     padding: 3px;
     position: relative;
-    width: fit-content;
+    width: auto;
+    margin: 0 auto;
   }
 
   .blue-toggle .toggle-option {
@@ -718,6 +840,10 @@
     letter-spacing: 0.5px;
     font-weight: 500;
     transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    line-height: 1;
   }
 
   .blue-toggle .toggle-option.active {
@@ -742,6 +868,7 @@
     justify-content: center;
     text-transform: uppercase;
     letter-spacing: 1px;
+
   }
 
   #saveButton:hover {
@@ -750,4 +877,18 @@
 
   #saveButton.saved {
     background: #78CE82;
+  }
+
+  /* Export Mode Container - Centered in flexbox */
+  .export-mode-container {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .export-mode-container label {
+    margin-bottom: 4px;
+    text-align: center;
   }
