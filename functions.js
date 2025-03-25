@@ -348,7 +348,7 @@ function generatePreview(element) {
       quality: 1.0
     }).then(canvas => {
       const preview = $("#webpPreview");
-      preview.attr("src", canvas.toDataURL("image/webp", 1.0));
+      preview.attr("src", canvas.toDataURL("image/jpeg", 0.75));
       preview.css("display", "block");
     }).catch(error => {
       console.error("Error generating preview:", error);
@@ -421,7 +421,7 @@ function validateExportInputs() {
  */
 function exportSingleBlueprint(blueprintType, formattedDate, values) {
   const isSquare = blueprintType === "square";
-  const fileName = `${formattedDate}_${values.show}${values.artist ? '_' + values.artist : ''}${isSquare ? '_square' : ''}.webp`;
+  const fileName = `${formattedDate}_${values.show}${values.artist ? '_' + values.artist : ''}${isSquare ? '_square' : ''}.jpg`;
   
   loadTemplate(blueprintType).then(() => {
     const $bp = $("#exportContainer " + blueprints[blueprintType].container);
@@ -443,7 +443,7 @@ function exportAllBlueprints(formattedDate, values) {
   loadTemplate("original").then(() => {
     const $bp = $("#exportContainer " + blueprints.original.container);
     const dimensions = blueprints.original.dimensions;
-    const fileName = `${formattedDate}_${values.show}${values.artist ? '_' + values.artist : ''}.webp`;
+    const fileName = `${formattedDate}_${values.show}${values.artist ? '_' + values.artist : ''}.jpg`;
     
     updateBlueprintElements($bp, values);
     
@@ -453,7 +453,7 @@ function exportAllBlueprints(formattedDate, values) {
       loadTemplate("square").then(() => {
         const $bpSquare = $("#exportContainer " + blueprints.square.container);
         const dimensionsSquare = blueprints.square.dimensions;
-        const fileNameSquare = `${formattedDate}_${values.show}${values.artist ? '_' + values.artist : ''}_square.webp`;
+        const fileNameSquare = `${formattedDate}_${values.show}${values.artist ? '_' + values.artist : ''}_square.jpg`;
         
         updateBlueprintElements($bpSquare, values);
         renderAndDownload($bpSquare[0], fileNameSquare, dimensionsSquare, true);
@@ -498,7 +498,7 @@ function renderAndDownload(element, fileName, dimensions, updateButtonState = tr
       // Download the image
             const link = document.createElement("a");
             link.download = fileName;
-            link.href = finalCanvas.toDataURL("image/webp", 1.0);
+            link.href = finalCanvas.toDataURL("image/jpeg", 0.75);
             link.click();
             
       // Reset element dimensions

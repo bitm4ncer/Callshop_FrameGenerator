@@ -981,3 +981,50 @@
     font-family: "IconaSans", sans-serif;
     font-weight: 400; /* Explicitly set to Regular */
   }
+
+  /* OneDrive Upload Button */
+  .onedrive-button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #0078d4; /* Microsoft blue */
+    color: white;
+    padding: 12px 20px;
+    border: none;
+    border-radius: 50px;
+    cursor: pointer;
+    font-size: 16px;
+    font-weight: 400;
+    width: 100%;
+    transition: all 0.3s ease;
+    font-family: "IconaSans", sans-serif;
+    margin-top: 10px;
+  }
+
+  .onedrive-button:hover {
+    background: #106ebe; /* Darker shade on hover */
+  }
+
+  .onedrive-button svg,
+  .onedrive-button img {
+    margin-right: 8px;
+    width: 20px;
+    height: 20px;
+  }
+
+  /* OneDrive auth status indicator */
+  .onedrive-status {
+    display: flex;
+    align-items: center;
+    font-size: 14px;
+    margin-top: 8px;
+    color: #333;
+  }
+
+  .onedrive-status.connected {
+    color: #78CE82;
+  }
+
+  .onedrive-status.error {
+    color: #e74c3c;
+  }
