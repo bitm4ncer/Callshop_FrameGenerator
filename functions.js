@@ -498,7 +498,7 @@ function renderAndDownload(element, fileName, dimensions, updateButtonState = tr
       // Download the image
             const link = document.createElement("a");
             link.download = fileName;
-            link.href = finalCanvas.toDataURL("image/jpeg", 0.75);
+            link.href = finalCanvas.toDataURL("image/jpeg", 0.85);
             link.click();
             
       // Reset element dimensions
