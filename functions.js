@@ -481,44 +481,49 @@ function renderAndDownload(element, fileName, dimensions, updateButtonState = tr
     html2canvas(element, {
       width: dimensions.width,
       height: dimensions.height,
-            scale: 1,
-            useCORS: true,
+      scale: 2,
+      useCORS: true,
       logging: false,
-            backgroundColor: "#222"
-        }).then(canvas => {
+      backgroundColor: "#222",
+      imageTimeout: 0,
+      allowTaint: true,
+      quality: 1.0
+    }).then(canvas => {
       // Create final canvas with exact dimensions
-            const finalCanvas = document.createElement('canvas');
+      const finalCanvas = document.createElement('canvas');
       finalCanvas.width = dimensions.width;
       finalCanvas.height = dimensions.height;
-            const ctx = finalCanvas.getContext('2d');
-            
-      // Draw rendered content
+      const ctx = finalCanvas.getContext('2d');
+      
+      // Draw rendered content with high quality settings
+      ctx.imageSmoothingEnabled = true;
+      ctx.imageSmoothingQuality = 'high';
       ctx.drawImage(canvas, 0, 0, dimensions.width, dimensions.height);
-            
-      // Download the image
-            const link = document.createElement("a");
-            link.download = fileName;
-            link.href = finalCanvas.toDataURL("image/jpeg", 0.85);
-            link.click();
-            
+      
+      // Download the image with maximum quality
+      const link = document.createElement("a");
+      link.download = fileName;
+      link.href = finalCanvas.toDataURL("image/jpeg", 1.0);
+      link.click();
+      
       // Reset element dimensions
       $(element).css({
-                width: '',
-                height: ''
-            });
-            
+        width: '',
+        height: ''
+      });
+      
       // Update button state if requested
       if (updateButtonState) {
-                    $("#saveButton").addClass('saved').html('EXPORTED! <span class="checkmark">✓</span>');
-                    
-                    setTimeout(() => {
-                        $("#saveButton").removeClass('saved').text("EXPORT!");
-                    }, 3000);
+        $("#saveButton").addClass('saved').html('EXPORTED! <span class="checkmark">✓</span>');
+        
+        setTimeout(() => {
+          $("#saveButton").removeClass('saved').text("EXPORT!");
+        }, 3000);
       }
       
       resolve();
     });
-});
+  });
 }
 
 /**
