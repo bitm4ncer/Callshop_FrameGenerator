@@ -768,6 +768,10 @@
     align-items: center;
   }
 
+  .info-box.modern .time-separator img {
+    margin-top: 2px;
+  }
+
   #bp-date, #bp-time {
     font-weight: 700;
   }
